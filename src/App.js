@@ -1,26 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Switch, Route, Redirect } from 'react-router-dom';
+
+import Main from './pages/Main/Main';
+import PageNotFound from './pages/PageNotFound/PageNotFound';
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => (
+  <div className="App">
+    <Switch>
+      <Route exact path='/'>
+        <Redirect to='/covid-map-app/' />
+      </Route>
+      <Route exact path='/covid-map-app/'>
+        <Main />
+      </Route>
+      <PageNotFound />
+    </Switch>
+  </div>
+);
 
 export default App;
