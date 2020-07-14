@@ -1,12 +1,45 @@
 .cluster-marker {
   color: #fff;
-  background: rgba(47, 154, 255, 0.5);
+  background: rgba(150, 150, 255, 0.7);
   border-radius: 50%;
   /* border: 1px solid black; */
   display: flex;
   justify-content: center;
   align-content: center;
   place-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.country-marker {
+  
+  color: #fff;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  /* border: 1px solid black; */
+  display: grid;
+  place-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.zero-marker {
+  color: #000000;
+  background: rgba(120, 120, 120, 0.9);
+  border-radius: 50%;
+  border: 1px solid black;
+  width: 5px !important;
+  height: 5px !important;
+  display: grid;
+  place-content: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .cluster-count {

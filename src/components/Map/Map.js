@@ -5,10 +5,21 @@ import useSupercluster from 'use-supercluster';
 
 import { fetchCountries } from '../../actions';
 
-const Map = ({ width, height, locations, points }) => {
+const Map = ({ width, height, points, total, clusterPoints }) => {
+  const options = {
+    ACTIVE: 'active',
+    CONFIRMED: 'totalConfirmed',
+    DEATHS: 'totalDeaths',
+    RECOVERED: 'totalRecovered',
+    DEFAULT: 'totalDeaths'
+  }
+
+  const [option, setOption] = useState(options.DEFAULT);
+
   // setup map
   const [viewport, setViewport] = useState({
-    latitude: 0, longitude: 0,
+    latitude: 0,
+    longitude: 0,
     width: width,
     height: height,
     zoom: 0,
@@ -20,17 +31,37 @@ const Map = ({ width, height, locations, points }) => {
   const bounds = mapRef.current ? mapRef.current.getMap().getBounds().toArray().flat() : null;
 
   // get clusters
-  const { clusters, supercluster } = useSupercluster({
-    points,
+  const { clusters: generalClusters, supercluster: generalSupercluster } = useSupercluster({
+    points: clusterPoints,
     zoom: viewport.zoom,
     bounds,
     options: {
-      radius: 50,
+      radius: 75,
       maxZoom: 20
     }
   });
 
-  // console.log(clusters, supercluster);
+  const { clusters: countryClusters, supercluster: countrySupercluster } = useSupercluster({
+    points: points.reduce((countriesPoints, country) => country.point.geometry.type === 'None' || country.provincePoints.length > 0
+      ? countriesPoints
+      : [...countriesPoints, country.point], []),
+    zoom: viewport.zoom,
+    bounds,
+    options: {
+      radius: 75,
+      maxZoom: 20
+    }
+  });
+
+  // get virus information from all clusters
+  const getVirusInfo = (cluster, superclusterX) => {
+    if (!cluster.properties.cluster)
+      return cluster.properties.cases[option];
+
+    return superclusterX.getChildren(cluster.id).reduce((total, clusterX) => total + getVirusInfo(clusterX, superclusterX), 0);
+  }
+
+  const getTotal = () => total[option];
 
   return (
     <>
@@ -42,41 +73,63 @@ const Map = ({ width, height, locations, points }) => {
         mapStyle='mapbox://styles/mapbox/dark-v10'
         ref={mapRef}
       >
-        {clusters.map(cluster => {
+        {countryClusters.map(cluster => getVirusInfo(cluster, countrySupercluster) ? (
+          <Marker key={`countryCluster-${cluster.id ? cluster.id : cluster.properties.country}`} latitude={cluster.geometry.coordinates[1]} longitude={cluster.geometry.coordinates[0]}>
+            <div
+              onClick={() => console.log(cluster, getVirusInfo(cluster, countrySupercluster))}
+              className={getVirusInfo(cluster, countrySupercluster) ? 'country-marker' : 'zero-marker'}
+              style={{
+                width: `${5 + viewport.zoom / 5 + (getVirusInfo(cluster, countrySupercluster) / getTotal()) * (200 + viewport.zoom * 300) + (getTotal() / (getVirusInfo(cluster, countrySupercluster) * 1000000) / 5)}px`,
+                height: `${5 + viewport.zoom / 5 + (getVirusInfo(cluster, countrySupercluster) / getTotal()) * (200 + viewport.zoom * 300) + (getTotal() / (getVirusInfo(cluster, countrySupercluster) * 1000000) / 5)}px`
+              }} />
+          </Marker>
+        ) : null)}
+        {generalClusters.map(cluster => {
           const [longitude, latitude] = cluster.geometry.coordinates;
           const {
             cluster: isCluster,
             point_count: pointCount
           } = cluster.properties;
 
-
-
-
+          let count = getVirusInfo(cluster, generalSupercluster);
 
           if (isCluster) {
-            return (
-              <Marker key={cluster.id} latitude={latitude} longitude={longitude}>
-                <div className='cluster-marker' style={{ width: `${20 + (pointCount / locations.length) * 50}px`, height: `${20 + (pointCount / locations.length) * 50}px` }}>
-                  <p className='cluster-count'>{pointCount}</p>
-                </div>
+            return count ? (
+              <Marker key={`generalCluster-${cluster.id}`} latitude={latitude} longitude={longitude}>
+                <div
+                  className={getVirusInfo(cluster, generalSupercluster) ? 'cluster-marker' : 'zero-marker'}
+                  style={{
+                    width: `${5 + viewport.zoom / 5 + (count / getTotal()) * (200 + viewport.zoom * 300) + (getTotal() / (count * 1000000) / 5)}px`,
+                    height: `${5 + viewport.zoom / 5 + (count / getTotal()) * (200 + viewport.zoom * 300) + (getTotal() / (count * 1000000) / 5)}px`
+                  }}
+                  onClick={() => console.log(generalSupercluster.getChildren(cluster.id))}
+                />
               </Marker>
-            )
+            ) : null;
           }
-          return (
-            <Marker key={`${cluster.properties.countryCode}${cluster.properties.province ? '-' + cluster.properties.province : ''}${cluster.properties.cityCode ? '-' + cluster.properties.countryCode : ''}`} latitude={latitude} longitude={longitude}>
-              <button onClick={() => console.log(cluster)} />
+          return count ? (
+            <Marker key={`${cluster.properties.countryCode}${cluster.properties.province ? '-' + cluster.properties.province : ''}${cluster.properties.cityCode ? '-' + cluster.properties.cityCode : ''}`} latitude={latitude} longitude={longitude}>
+              <div
+                onClick={() => console.log(cluster)}
+                className={getVirusInfo(cluster, generalSupercluster) ? 'cluster-marker' : 'zero-marker'}
+                style={{
+                  width: `${5 + viewport.zoom / 5 + (count / getTotal()) * (200 + viewport.zoom * 300) + (getTotal() / (count * 1000000) / 5)}px`,
+                  height: `${5 + viewport.zoom / 5 + (count / getTotal()) * (200 + viewport.zoom * 300) + (getTotal() / (count * 1000000) / 5)}px`
+                }}
+              />
             </Marker>
-          );
+          ) : null;
         })}
       </ReactMapGL>
-      <button onClick={() => console.log(locations)}>Show Countries</button>
+      <button onClick={() => console.log(points)}>Show Points</button>
     </>
   );
 };
 
 const mapStateToProps = (state) => ({
-  locations: state.locations,
+  total: state.total,
   points: state.points,
+  clusterPoints: state.clusterPoints,
 });
 
 const mapDispatchToProps = {};

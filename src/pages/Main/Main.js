@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux';
 
-import { fetchVirusData, fetchCountries } from '../../actions';
+import { fetchVirusData, fetchDates, fetchCountries, fetchTotalCases, fetchPoints, fetchClusterPoints } from '../../actions';
 
 import Header from '../../components/Header/Header';
 import Map from '../../components/Map/Map';
 
-const Main = ({ virusData, locations, points, fetchVirusData, fetchCountries }) => {
+const Main = ({ virusData, points, clusterPoints, fetchVirusData, fetchDates, fetchCountries, fetchTotalCases, fetchPoints, fetchClusterPoints }) => {
   const [didFetchData, setDidFetchData] = useState(false);
+
   useEffect(() => {
-    console.log(virusData);
     if (!didFetchData) {
       console.log('Getting Virus Data');
       fetchVirusData();
@@ -17,8 +17,15 @@ const Main = ({ virusData, locations, points, fetchVirusData, fetchCountries }) 
     }
 
     if (didFetchData && virusData) {
+      console.log('Getting Dates');
+      fetchDates();
       console.log('Getting Countries');
       fetchCountries();
+      console.log('Getting Total Cases');
+      fetchTotalCases();
+      console.log('Getting Points');
+      fetchPoints();
+      fetchClusterPoints();
     }
   }, [virusData]);
 
@@ -26,8 +33,8 @@ const Main = ({ virusData, locations, points, fetchVirusData, fetchCountries }) 
     <>
       <Header />
       <div className='container'>
-        {console.log(locations, points)}
-        {locations.length > 0 ? <Map width='100%' height='50vh' /> : <h1>Loading . . .</h1>}
+        {console.log(points)}
+        {points.length > 0 && clusterPoints.length > 0 ? <Map width='100%' height='50vh' /> : <h1>Loading . . .</h1>}
       </div>
     </>
   )
@@ -35,13 +42,17 @@ const Main = ({ virusData, locations, points, fetchVirusData, fetchCountries }) 
 
 const mapStateToProps = (state) => ({
   virusData: state.virusData,
-  locations: state.locations,
   points: state.points,
+  clusterPoints: state.clusterPoints,
 });
 
 const mapDispatchToProps = {
   fetchVirusData,
+  fetchDates,
   fetchCountries,
+  fetchTotalCases,
+  fetchPoints,
+  fetchClusterPoints
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
