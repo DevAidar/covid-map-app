@@ -68,7 +68,7 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
       <ReactMapGL
         {...viewport}
         maxZoom={20}
-        mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+        mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ? REACT_APP_MAPBOX_TOKEN : 'pk.eyJ1IjoibGltZXBlYWNoIiwiYSI6ImNrY2RyNXVicDAxN2UzM3A4aGVkbmNlazMifQ.Yz5AUxZ_z7jd5QrcJS1mpQ'}
         onViewportChange={viewport => setViewport(viewport)}
         mapStyle='mapbox://styles/mapbox/dark-v10'
         ref={mapRef}
