@@ -5,7 +5,7 @@ import {
 	FETCH_COUNTRIES,
 	FETCH_POINTS,
 	FETCH_CLUSTER_POINTS,
-} from "../constants";
+} from '../constants';
 
 const INITIAL_STATE = {
 	virusData: {},
@@ -19,7 +19,7 @@ const INITIAL_STATE = {
 const rootReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case FETCH_VIRUS_DATA:
-			console.log("Virus Data", action.virusData);
+			console.log('Virus Data', action.virusData);
 			return {
 				...state,
 				virusData: action.virusData,
@@ -32,7 +32,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 					: dates.set(data.Date, [data])
 			);
 
-			console.log("Dates", dates);
+			console.log('Dates', dates);
 
 			return {
 				...state,
@@ -77,7 +77,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 
 						if (
 							!place.Province &&
-							(!place.City || place.City === "Unassigned")
+							(!place.City || place.City === 'Unassigned')
 						) {
 							totalCases = {
 								active: place.Active,
@@ -113,7 +113,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 						}
 						if (
 							!place.Province &&
-							(!place.City || place.City === "Unassigned")
+							(!place.City || place.City === 'Unassigned')
 						) {
 							totalCases = {
 								active: place.Active,
@@ -137,7 +137,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 					}
 				});
 
-			console.log("Countries", countries);
+			console.log('Countries', countries);
 
 			return {
 				...state,
@@ -184,7 +184,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 				}
 			);
 
-			console.log("Total", total);
+			console.log('Total', total);
 
 			return {
 				...state,
@@ -193,10 +193,10 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 		case FETCH_POINTS:
 			let points = [...state.countries.keys()].map((country) => ({
 				point: {
-					type: "Feature",
+					type: 'Feature',
 					properties: {
 						cluster: false,
-						category: "country",
+						category: 'country',
 						cases:
 							Object.keys(state.countries.get(country).totalCases).length > 0
 								? state.countries.get(country).totalCases
@@ -225,8 +225,8 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 					geometry: {
 						type:
 							Object.keys(state.countries.get(country).coordinates).length > 0
-								? "Point"
-								: "None",
+								? 'Point'
+								: 'None',
 						coordinates:
 							Object.keys(state.countries.get(country).coordinates).length > 0
 								? [
@@ -242,10 +242,10 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 								.get(country)
 								.provinces.get(province)
 								.places.map((place) => ({
-									type: "Feature",
+									type: 'Feature',
 									properties: {
 										cluster: false,
-										category: place.City ? "city" : "province",
+										category: place.City ? 'city' : 'province',
 										cases: {
 											active: place.Active,
 											totalConfirmed: place.Confirmed,
@@ -259,7 +259,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 										province: place.Province,
 									},
 									geometry: {
-										type: "Point",
+										type: 'Point',
 										coordinates: [parseFloat(place.Lon), parseFloat(place.Lat)],
 									},
 								}))
@@ -267,7 +267,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 					: [],
 			}));
 
-			console.log("Points", points);
+			console.log('Points', points);
 
 			return {
 				...state,
@@ -288,7 +288,7 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 				[]
 			);
 
-			console.log("Cluster Points", clusterPoints);
+			console.log('Cluster Points', clusterPoints);
 
 			let pointsThing = [
 				...state.dates
@@ -299,14 +299,14 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 					)
 					.filter((country) => country.Lat && country.Lon)
 					.map((location) => ({
-						type: "Feature",
+						type: 'Feature',
 						properties: {
 							cluster: false,
 							category: location.City
-								? "city"
+								? 'city'
 								: location.Province
-								? "province"
-								: "country",
+								? 'province'
+								: 'country',
 							cases: {
 								active: location.Active,
 								confirmed: location.Confirmed,
@@ -320,13 +320,13 @@ const rootReducer = (state = INITIAL_STATE, action) => {
 							province: location.Province,
 						},
 						geometry: {
-							type: "Point",
+							type: 'Point',
 							coordinates: [parseFloat(location.Lon), parseFloat(location.Lat)],
 						},
 					})),
 			];
 
-			console.log("Points example", pointsThing);
+			console.log('Points example', pointsThing);
 
 			return {
 				...state,

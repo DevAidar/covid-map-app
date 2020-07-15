@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 
 import {
 	fetchVirusData,
@@ -8,10 +8,10 @@ import {
 	fetchTotalCases,
 	fetchPoints,
 	fetchClusterPoints,
-} from "../../actions";
+} from '../../actions';
 
-import Header from "../../components/Header/Header";
-import Map from "../../components/Map/Map";
+import Header from '../../components/Header/Header';
+import Map from '../../components/Map/Map';
 
 const Main = ({
 	virusData,
@@ -28,19 +28,19 @@ const Main = ({
 
 	useEffect(() => {
 		if (!didFetchData) {
-			console.log("Getting Virus Data");
+			console.log('Getting Virus Data');
 			fetchVirusData();
 			setDidFetchData(true);
 		}
 
 		if (didFetchData && virusData) {
-			console.log("Getting Dates");
+			console.log('Getting Dates');
 			fetchDates();
-			console.log("Getting Countries");
+			console.log('Getting Countries');
 			fetchCountries();
-			console.log("Getting Total Cases");
+			console.log('Getting Total Cases');
 			fetchTotalCases();
-			console.log("Getting Points");
+			console.log('Getting Points');
 			fetchPoints();
 			fetchClusterPoints();
 		}

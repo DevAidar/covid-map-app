@@ -1,15 +1,15 @@
-import React, { useState, useRef } from "react";
-import { connect } from "react-redux";
-import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
-import useSupercluster from "use-supercluster";
+import React, { useState, useRef } from 'react';
+import { connect } from 'react-redux';
+import ReactMapGL, { Marker, FlyToInterpolator } from 'react-map-gl';
+import useSupercluster from 'use-supercluster';
 
 const Map = ({ width, height, points, total, clusterPoints }) => {
   const options = {
-    ACTIVE: "active",
-    CONFIRMED: "totalConfirmed",
-    DEATHS: "totalDeaths",
-    RECOVERED: "totalRecovered",
-    DEFAULT: "totalDeaths",
+    ACTIVE: 'active',
+    CONFIRMED: 'totalConfirmed',
+    DEATHS: 'totalDeaths',
+    RECOVERED: 'totalRecovered',
+    DEFAULT: 'totalDeaths',
   };
 
   const [option, setOption] = useState(options.DEFAULT);
@@ -52,7 +52,7 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
   } = useSupercluster({
     points: points.reduce(
       (countriesPoints, country) =>
-        country.point.geometry.type === "None" ||
+        country.point.geometry.type === 'None' ||
         country.provincePoints.length > 0
           ? countriesPoints
           : [...countriesPoints, country.point],
@@ -88,7 +88,7 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
         mapboxApiAccessToken={
           process.env.REACT_APP_MAPBOX_TOKEN
             ? process.env.REACT_APP_MAPBOX_TOKEN
-            : "pk.eyJ1IjoibGltZXBlYWNoIiwiYSI6ImNrY2RyNXVicDAxN2UzM3A4aGVkbmNlazMifQ.Yz5AUxZ_z7jd5QrcJS1mpQ"
+            : 'pk.eyJ1IjoibGltZXBlYWNoIiwiYSI6ImNrY2RyNXVicDAxN2UzM3A4aGVkbmNlazMifQ.Yz5AUxZ_z7jd5QrcJS1mpQ'
         }
         onViewportChange={(viewport) => setViewport(viewport)}
         mapStyle="mapbox://styles/mapbox/dark-v10"
@@ -112,8 +112,8 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
                 }
                 className={
                   getVirusInfo(cluster, countrySupercluster)
-                    ? "country-marker"
-                    : "zero-marker"
+                    ? 'country-marker'
+                    : 'zero-marker'
                 }
                 style={{
                   width: `${
@@ -156,8 +156,8 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
                 <div
                   className={
                     getVirusInfo(cluster, generalSupercluster)
-                      ? "cluster-marker"
-                      : "zero-marker"
+                      ? 'cluster-marker'
+                      : 'zero-marker'
                   }
                   style={{
                     width: `${
@@ -184,12 +184,12 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
             <Marker
               key={`${cluster.properties.countryCode}${
                 cluster.properties.province
-                  ? "-" + cluster.properties.province
-                  : ""
+                  ? '-' + cluster.properties.province
+                  : ''
               }${
                 cluster.properties.cityCode
-                  ? "-" + cluster.properties.cityCode
-                  : ""
+                  ? '-' + cluster.properties.cityCode
+                  : ''
               }`}
               latitude={latitude}
               longitude={longitude}
@@ -198,8 +198,8 @@ const Map = ({ width, height, points, total, clusterPoints }) => {
                 onClick={() => console.log(cluster)}
                 className={
                   getVirusInfo(cluster, generalSupercluster)
-                    ? "cluster-marker"
-                    : "zero-marker"
+                    ? 'cluster-marker'
+                    : 'zero-marker'
                 }
                 style={{
                   width: `${
